@@ -21,7 +21,7 @@ const PageList = ({ user }) => {
   const fetchUserPages = async () => {
     let { data: pages, error } = await supabase
       .from("pages")
-      .select("id,title,slug,author_name,avatar")
+      .select("id,title,slug,users(full_name, avatar_url)")
       .eq("user_id", user.id)
       .order("id", { ascending: false });
 
@@ -32,7 +32,7 @@ const PageList = ({ user }) => {
   const fetchPages = async () => {
     let { data: pages, error } = await supabase
       .from("pages")
-      .select("id,title,slug,author_name,avatar")
+      .select("id,title,slug,users(full_name, avatar_url)")
       .order("id", { ascending: false });
 
     if (error) console.log("error", error);
@@ -50,7 +50,6 @@ const PageList = ({ user }) => {
           title,
           slug,
           user_id: user.id,
-          author_name: user.user_metadata.full_name,
         })
         .single();
       if (error) setErrorText(error.message);
@@ -111,14 +110,22 @@ const PageList = ({ user }) => {
                     <img
                       alt="avatar"
                       className="w-16 h-16 bg-gray-100 object-cover object-center flex-shrink-0 rounded-full mr-4"
-                      src={page.avatar}
+                      src={
+                        page?.users?.avatar_url
+                          ? page.users.avatar_url
+                          : "https://dummyimage.com/80x80"
+                      }
                       loading="lazy"
                     />
                     <div className="flex-grow">
                       <h2 className="text-gray-900 title-font font-medium">
                         {page.title}
                       </h2>
-                      <p className="text-gray-500">{`by ${page.author_name}`}</p>
+                      <p className="text-gray-500">{`by ${
+                        page?.users?.full_name
+                          ? page.users.full_name
+                          : "Secret User"
+                      }`}</p>
                     </div>
                   </div>
                 </a>
