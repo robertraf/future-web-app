@@ -21,7 +21,7 @@ const PageList = ({ user }) => {
   const fetchUserPages = async () => {
     let { data: pages, error } = await supabase
       .from("pages")
-      .select("id,title,slug,author_name")
+      .select("id,title,slug,author_name,avatar")
       .eq("user_id", user.id)
       .order("id", { ascending: false });
 
@@ -32,7 +32,7 @@ const PageList = ({ user }) => {
   const fetchPages = async () => {
     let { data: pages, error } = await supabase
       .from("pages")
-      .select("id,title,slug,author_name")
+      .select("id,title,slug,author_name,avatar")
       .order("id", { ascending: false });
 
     if (error) console.log("error", error);
@@ -109,9 +109,10 @@ const PageList = ({ user }) => {
                 <a>
                   <div className="h-full flex items-center border-gray-200 border p-4 rounded-lg">
                     <img
-                      alt="team"
+                      alt="avatar"
                       className="w-16 h-16 bg-gray-100 object-cover object-center flex-shrink-0 rounded-full mr-4"
-                      src="https://dummyimage.com/80x80"
+                      src={page.avatar}
+                      loading="lazy"
                     />
                     <div className="flex-grow">
                       <h2 className="text-gray-900 title-font font-medium">
