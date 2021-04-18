@@ -1,4 +1,4 @@
-import { ModalProvider, useForm, usePlugin } from "tinacms";
+import { ModalProvider, useCMS, useForm, usePlugin } from "tinacms";
 import { InlineForm, InlineBlocks } from "react-tinacms-inline";
 import { Hero, HeroBlock } from "@/components/blocks/Hero";
 
@@ -11,19 +11,21 @@ const blocks = {
   },
 };
 
-const TinaForm = ({ cms, currentPage }) => {
-  const initialValues = currentPage.data ?? {};
+const TinaForm = ({ page }) => {
+  const cms = useCMS();
+
+  const initialValues = page.data ?? {};
 
   const [, form] = useForm({
-    id: currentPage.id,
-    label: currentPage.title,
+    id: page.id,
+    label: page.title,
     initialValues,
     onSubmit: async (formData) => {
       try {
         await supabase
           .from("pages")
           .update({ data: formData })
-          .eq("id", currentPage.id)
+          .eq("id", page.id)
           .single();
         cms.alerts.success("Page saved successfully.");
       } catch (error) {
