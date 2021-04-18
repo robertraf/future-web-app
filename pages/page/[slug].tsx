@@ -1,13 +1,26 @@
-import { GetServerSideProps } from "next";
-import { useCMS, withTina } from "tinacms";
+import { useRouter } from "next/router";
+import { GetStaticProps, GetStaticPaths } from "next";
+import { withTina } from "tinacms";
 import TinaForm from "@/components/TinaForm";
 
 import { supabase } from "@/lib/initSupabase";
-import { Auth } from "@supabase/ui";
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params: { slug },
-}) => {
+// This function gets called at build time
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Call an external API endpoint to get pages
+  const { data: pages } = await supabase.from("pages").select("slug");
+
+  // Get the paths we want to pre-render based on pages
+  const paths = pages.map((page) => ({
+    params: { slug: page.slug },
+  }));
+
+  // We'll pre-render only these paths at build time.
+  // { fallback: false } means other routes should 404.
+  return { paths, fallback: true };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params: { slug } }) => {
   const { data: page, error } = await supabase
     .from("pages")
     .select("*")
@@ -23,34 +36,28 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      page,
+      page: page[0],
     },
+    // Re-generate the page at most once per second
+    // if a request comes in
+    revalidate: 1,
   };
 };
 
 const Page = ({ page }) => {
-  const cms = useCMS();
+  const router = useRouter();
 
-  const { user } = Auth.useUser();
+  // If the page is not yet generated, this will be displayed
+  // initially until getStaticProps() finishes running
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
-  const currentPage = page[0];
-
-  return (
-    <>
-      <div className={cms.enabled ? "mt-20 mx-5" : ""}>
-        <TinaForm cms={cms} currentPage={currentPage} />
-      </div>
-      {currentPage?.user_id === user?.id && (
-        <button onClick={() => cms.toggle()}>
-          {cms.enabled ? "Exit Edit Mode 🚪" : "Edit This Site ✏️"}
-        </button>
-      )}
-    </>
-  );
+  return <TinaForm page={page} />;
 };
 
 export default withTina(Page, {
   enabled: false,
   sidebar: false,
-  toolbar: true,
+  toolbar: false,
 });
