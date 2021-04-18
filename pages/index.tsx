@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import PageList from "@/components/PageList";
 
@@ -7,8 +7,26 @@ import { Auth } from "@supabase/ui";
 
 const Home = () => {
   const { user } = Auth.useUser();
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        fetch("/api/auth", {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({ event, session }),
+        }).then((res) => res.json());
+      }
+    );
+
+    return () => {
+      authListener.unsubscribe();
+    };
+  }, []);
 
   return (
     <>

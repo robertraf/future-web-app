@@ -15,6 +15,7 @@
     "react-dom": "17.0.1",
     "react-tinacms-inline": "^0.39.0",
     "styled-components": "^5.2.3",
+    "swr": "^0.5.5",
     "tinacms": "^0.39.0"
   },
   "devDependencies": {
