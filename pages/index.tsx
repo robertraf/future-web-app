@@ -285,7 +285,7 @@ const Home = () => {
                   <div className="w-full h-full flex justify-center items-center p-4">
                     <Auth
                       supabaseClient={supabase}
-                      providers={["github"]}
+                      providers={["github", "google"]}
                       socialLayout="horizontal"
                       socialButtonSize="xlarge"
                     />
