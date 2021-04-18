@@ -1,24 +1,12 @@
 import { useState, useEffect } from "react";
-// import useSWR from "swr";
 import Head from "next/head";
-// import { fetcher } from "@/utils/fetcher";
 import PageList from "@/components/PageList";
 
 import { supabase } from "@/lib/initSupabase";
 import { Auth } from "@supabase/ui";
 
 const Home = () => {
-  const {
-    user,
-    // session
-  } = Auth.useUser();
-
-  // const { data, error } = useSWR(
-  //   session ? ["/api/getUser", session.access_token] : null,
-  //   fetcher
-  // );
-
-  // const [authView, setAuthView] = useState("sign_in");
+  const { user } = Auth.useUser();
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -26,11 +14,6 @@ const Home = () => {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        // if (event === "PASSWORD_RECOVERY") setAuthView("forgotten_password");
-        // if (event === "USER_UPDATED")
-        //   setTimeout(() => setAuthView("sign_in"), 1000);
-        // Send session to /api/auth route to set the auth cookie.
-        // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
         fetch("/api/auth", {
           method: "POST",
           headers: new Headers({ "Content-Type": "application/json" }),

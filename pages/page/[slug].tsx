@@ -7,16 +7,19 @@ import { Auth } from "@supabase/ui";
 
 export const getServerSideProps: GetServerSideProps = async ({
   params: { slug },
-  // req,
 }) => {
-  //const { user } = await supabase.auth.api.getUserByCookie(req);
-
   const { data: page, error } = await supabase
     .from("pages")
     .select("*")
     .eq("slug", slug);
 
   if (error) console.log("error", error);
+
+  if (!page?.length) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -29,8 +32,6 @@ const Page = ({ page }) => {
   const cms = useCMS();
 
   const { user } = Auth.useUser();
-
-  if (!page?.length) return <div>Page not found</div>;
 
   const currentPage = page[0];
 
