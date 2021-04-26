@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (error) console.log("error", error);
 
   if (!page?.length) {
-    // If user but not the owner, redirect to index.
+    // If user exists but is not the owner, redirect to home page.
     return { props: {}, redirect: { destination: "/", permanent: false } };
   }
 
