@@ -13,10 +13,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   if (error) console.log("error", error);
 
-  if (!pages?.length) {
-    return { notFound: true };
-  }
-
   return {
     props: {
       pages,
