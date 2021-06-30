@@ -9,7 +9,7 @@ const BottonNavbar = () => {
     <div className="w-full h-screen">
       <section
         id="bottom-navigation"
-        className="block md:pb-5 lg:pb-0 fixed inset-x-0 bottom-0 z-10 bg-white shadow"
+        className="block pt-3 pb-3 fixed inset-x-0 bottom-0 z-10 bg-white shadow"
       >
         <div id="tabs" className="flex justify-between">
           <Link href="/">
